@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Currency Converter Pro</title>
+  <meta name="description" content="Real-time currency converter with rate alerts and multi-currency comparison." />
+  <meta name="theme-color" content="#0f172a" />
+
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💱</text></svg>" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+
+<body>
+
+  <div id="toast" class="toast" role="alert" aria-live="polite"></div>
+
+  <div class="container">
+
+    <header class="header">
+      <div class="logo">
+        <span class="logo-icon">💱</span>
+        <div>
+          <h1>Currency Converter Pro</h1>
+          <p class="tagline">Live rates · Alerts · Compare</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <span class="live-badge"><span class="pulse-dot"></span> Live</span>
+        <button id="themeBtn" type="button" aria-label="Toggle theme" title="Toggle theme">🌙</button>
+      </div>
+    </header>
+
+    <nav class="tabs" role="tablist">
+      <button class="tab active" data-tab="converter" role="tab" aria-selected="true">
+        <i class="fa-solid fa-right-left"></i> Converter
+      </button>
+      <button class="tab" data-tab="compare" role="tab" aria-selected="false">
+        <i class="fa-solid fa-table-columns"></i> Compare
+      </button>
+      <button class="tab" data-tab="alerts" role="tab" aria-selected="false">
+        <i class="fa-solid fa-bell"></i> Alerts
+      </button>
+    </nav>
+
+    <!-- TAB 1 — CONVERTER -->
+    <div id="tab-converter" class="tab-panel active">
+
+      <div class="card amount-box">
+        <label for="amount">Amount</label>
+        <div class="amount-input-wrap">
+          <span class="currency-symbol" id="fromSymbol">$</span>
+          <input type="number" id="amount" value="1" min="0.01" step="any" aria-label="Amount to convert" />
+        </div>
+      </div>
+
+      <div class="currency-section">
+        <div class="currency-box">
+          <label>From</label>
+          <div class="select-container">
+            <img id="fromFlag" src="https://flagcdn.com/w40/us.png" alt="From currency flag" />
+            <div class="select-wrap">
+              <select name="from" id="fromSelect" aria-label="From currency"></select>
+              <span class="select-name" id="fromName">US Dollar</span>
+            </div>
+          </div>
+        </div>
+
+        <button id="swapBtn" type="button" class="swap-btn" aria-label="Swap currencies">
+          <i class="fa-solid fa-right-left"></i>
+        </button>
+
+        <div class="currency-box">
+          <label>To</label>
+          <div class="select-container">
+            <img id="toFlag" src="https://flagcdn.com/w40/in.png" alt="To currency flag" />
+            <div class="select-wrap">
+              <select name="to" id="toSelect" aria-label="To currency"></select>
+              <span class="select-name" id="toName">Indian Rupee</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button id="convertBtn" type="button" class="btn-primary">
+        <i class="fa-solid fa-rotate"></i> Get Exchange Rate
+      </button>
+
+      <div id="loader" class="loader" aria-live="polite" aria-label="Loading exchange rate">
+        <span></span><span></span><span></span>
+      </div>
+
+      <div class="result-card" id="resultCard">
+        <div class="result-main">
+          <h2 id="result">1 USD = 83.00 INR</h2>
+          <p id="reverseResult">1 INR = 0.0120 USD</p>
+        </div>
+        <div class="result-meta">
+          <span id="lastUpdated">—</span>
+          <span id="rateChange" class="rate-change"></span>
+        </div>
+        <div class="action-buttons">
+          <button id="copyBtn" type="button"><i class="fa-regular fa-copy"></i> Copy</button>
+          <button id="favoriteBtn" type="button"><i class="fa-regular fa-star"></i> Favorite</button>
+          <button id="exportBtn" type="button"><i class="fa-solid fa-download"></i> Export</button>
+        </div>
+      </div>
+
+      <div class="card section-favorites">
+        <h3><i class="fa-solid fa-star"></i> Favorites</h3>
+        <ul id="favoriteList" class="pill-list"></ul>
+      </div>
+
+      <div class="card section-history">
+        <div class="history-header">
+          <h3><i class="fa-solid fa-clock-rotate-left"></i> History</h3>
+          <button id="clearHistoryBtn" type="button" class="btn-ghost btn-sm">Clear</button>
+        </div>
+        <ul id="historyList" class="history-list"></ul>
+        <button id="exportHistoryBtn" type="button" class="btn-ghost btn-sm mt-10">
+          <i class="fa-solid fa-file-csv"></i> Export CSV
+        </button>
+      </div>
+
+    </div>
+
+    <!-- TAB 2 — COMPARE -->
+    <div id="tab-compare" class="tab-panel">
+      <div class="card">
+        <h3 style="margin-bottom:16px"><i class="fa-solid fa-table-columns"></i> Compare 1 <span id="compareFrom">USD</span> against multiple currencies</h3>
+        <div class="compare-controls">
+          <div class="select-container" style="flex:1">
+            <img id="comparefromFlag" src="https://flagcdn.com/w40/us.png" alt="" />
+            <select id="compareFromSelect" aria-label="Base currency for comparison"></select>
+          </div>
+          <button id="refreshCompare" type="button" class="btn-primary" style="width:auto;padding:12px 20px">
+            <i class="fa-solid fa-rotate"></i> Refresh
+          </button>
+        </div>
+        <div id="compareGrid" class="compare-grid"></div>
+      </div>
+    </div>
+
+    <!-- TAB 3 — ALERTS -->
+    <div id="tab-alerts" class="tab-panel">
+      <div class="card">
+        <h3 style="margin-bottom:16px"><i class="fa-solid fa-bell"></i> Rate Alert</h3>
+        <p class="section-desc">Set a target rate — we'll notify you when it's reached (on this page).</p>
+
+        <div class="alert-form">
+          <div class="alert-row">
+            <div class="currency-box" style="flex:1">
+              <label>From</label>
+              <div class="select-container">
+                <img id="alertFromFlag" src="https://flagcdn.com/w40/us.png" alt="" />
+                <select id="alertFromSelect" aria-label="Alert from currency"></select>
+              </div>
+            </div>
+            <div class="currency-box" style="flex:1">
+              <label>To</label>
+              <div class="select-container">
+                <img id="alertToFlag" src="https://flagcdn.com/w40/in.png" alt="" />
+                <select id="alertToSelect" aria-label="Alert to currency"></select>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert-row">
+            <div style="flex:1">
+              <label for="alertCondition">Condition</label>
+              <select id="alertCondition" class="full-select">
+                <option value="above">Rate goes ABOVE</option>
+                <option value="below">Rate goes BELOW</option>
+              </select>
+            </div>
+            <div style="flex:1">
+              <label for="alertTarget">Target Rate</label>
+              <input type="number" id="alertTarget" placeholder="e.g. 85" min="0" step="any" class="full-input" />
+            </div>
+          </div>
+
+          <button id="addAlertBtn" type="button" class="btn-primary">
+            <i class="fa-solid fa-bell-plus"></i> Add Alert
+          </button>
+        </div>
+
+        <div id="alertsList" class="alerts-list mt-10"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="codes.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
