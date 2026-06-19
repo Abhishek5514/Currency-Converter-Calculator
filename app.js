@@ -55,10 +55,6 @@ function getFlagUrl(currCode) {
   return cc ? `https://flagcdn.com/w40/${cc.toLowerCase()}.png` : '';
 }
 
-// ============================================================
-// 2. STORAGE
-// ============================================================
-
 const Storage = {
   get(key, fallback = null) {
     try {
@@ -74,10 +70,6 @@ const Storage = {
   },
 };
 
-// ============================================================
-// 3. TOAST
-// ============================================================
-
 const Toast = (() => {
   const el = document.getElementById('toast');
   let timer = null;
@@ -91,10 +83,6 @@ const Toast = (() => {
   };
 })();
 
-// ============================================================
-// 4. CURRENCY API
-// ============================================================
-
 const CurrencyAPI = {
   BASE_URL: 'https://open.er-api.com/v6/latest/',
 
@@ -106,10 +94,6 @@ const CurrencyAPI = {
     return data;
   },
 };
-
-// ============================================================
-// 5. ALERT MANAGER
-// ============================================================
 
 class AlertManager {
   constructor(onTriggered) {
@@ -172,9 +156,6 @@ class AlertManager {
   }
 }
 
-// ============================================================
-// 6. MAIN APP
-// ============================================================
 
 class App {
   constructor() {
@@ -642,10 +623,6 @@ class App {
     this.loader.classList.toggle('visible', show);
   }
 }
-
-// ============================================================
-// 7. BOOT
-// ============================================================
 
 window.addEventListener('DOMContentLoaded', () => {
   window._app = new App();
