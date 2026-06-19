@@ -1,9 +1,5 @@
 'use strict';
 
-// ============================================================
-// 1. CURRENCY META
-// ============================================================
-
 const CurrencyMeta = {
   USD: { name: 'US Dollar',          symbol: '$'  },
   EUR: { name: 'Euro',               symbol: '€'  },
